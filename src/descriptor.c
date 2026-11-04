@@ -3010,6 +3010,14 @@ static int analyze_miniscript_key(ms_ctx *ctx, uint32_t flags,
                               ctx->addr_ver->network == WALLY_NETWORK_LIQUID;
         if (main_key != main_net)
             ret = WALLY_EINVAL; /* Mismatched main/test network */
+    } else {
+        const bool main_key = extkey.version == BIP32_VER_MAIN_PUBLIC ||
+                              extkey.version == BIP32_VER_MAIN_PRIVATE;
+
+        uint32_t inferred_network = main_key ? WALLY_NETWORK_BITCOIN_MAINNET
+                                             : WALLY_NETWORK_BITCOIN_TESTNET;
+
+        ctx->addr_ver = addr_ver_from_network(inferred_network);
     }
 
     if (ret == WALLY_OK) {
